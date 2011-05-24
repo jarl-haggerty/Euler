@@ -1,0 +1,2 @@
+(time (let [series (reverse (take 100 (cons 2 (flatten (map #(vector 1 (* 2 %) 1) (range 1 Double/POSITIVE_INFINITY))))))]
+	(reduce #(+ %1 (- (int %2) 48)) 0 (str (numerator (reduce #(+ %2 (/ %1)) series))))))

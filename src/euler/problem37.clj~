@@ -1,0 +1,12 @@
+(let [tuncate-left (fn [input] (loop [stack input accum []]
+				 (if (first stack)
+				   (recur (rest stack) (conj accum (rest stack))))))
+      tuncate-right (fn [input] (loop [stack (reverse input) accum []]
+				 (if (first stack)
+				   (recur (rest stack) (conj accum (reverse stack))))))]
+  (take 3 (filter
+	    (fn [number]
+	      (let [left (->> prime str truncate-left (map #(apply str %)) (map #(Long/parseLong %)))
+		    right (->> prime str truncate-right (map #(apply str %)) (map #(Long/parseLong %)))]
+		(every? identity (map prime? (concat left right)))))
+	    (range Double/POSITIVE_INFINITY))))

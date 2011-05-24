@@ -1,0 +1,6 @@
+(time (let [triangle (fn [n] (/ (* n (+ n 1)) 2))
+	    square (fn [n] (* n n))
+	    pentagon (fn [n] (/ (* n (- (* 3 n) 1)) 2))
+	    hexagon (fn [n] (* n (- (* 2 n) 1)))
+	    heptagon (fn [n] (/ (* n (- (* 5 n) 3)) 2))
+	    octagon (fn [n] (* n (- (* 3 n) 2)))]))

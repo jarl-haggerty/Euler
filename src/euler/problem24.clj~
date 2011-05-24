@@ -1,0 +1,8 @@
+(let [permutations (fn [input]
+		     (loop [current (map list input)]
+		       (if (= (count (first current)) (count input))
+			 current
+			 (recur
+			  (for [c current i (reduce disj (set input) c)]
+			    (cons i c))))))]
+  (nth (permutations (range 10)) 1000))

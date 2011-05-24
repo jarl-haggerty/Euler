@@ -1,0 +1,35 @@
+(ns euler.problem22
+  (:use euler.core
+        clojure.java.io)
+  (:import java.io.File))
+
+(def letter-values
+     {"a"})
+
+
+(def names
+     (sort
+      (for [name (.split (.replace (.readLine (reader "names.txt")) "\"" "") ",")]
+        name)))
+
+(loop [stack names index 1 accum 0]
+  (if (empty? stack)
+    accum
+    (recur
+     (rest stack)
+     (inc index)
+     (+ accum
+        (* index
+           (reduce + (map #(- (int %) 64) (first stack))))))))
+
+(defn a [0 1 2 3 4 5 6 7 8 9])
+(loop [stack a (map list accum)]
+  (if (empty? stack)
+    accum
+    (recur
+     (rest stack)
+     (for [x accum y (sort (first stack))]))))
+
+(take 50 (sort (map list-to-int (permutations [0 1 2 3 4 5 6 7 8 9]))))
+
+(defn fib-ratio [n1 n2] )

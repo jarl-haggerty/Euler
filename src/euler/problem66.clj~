@@ -1,0 +1,9 @@
+(let [(continue [[a numerator denominator]]
+		(let [new-numerator (/ (- (first denominator) (* (second denominator) (second denominator)))
+				       numerator)
+		      integral (int (/ (+ (Math/sqrt (first denominator)) (second denominator))
+				       new-numerator))
+		      new-denominator [(first denominator) (- (- (second denominator) (* new-numerator integral)))]]
+		  [integral new-numerator new-denominator]))
+      sqrt (fn [n] (map first (iterate continue [(int n) [1 n (int (Math/sqrt n))]])))]
+  (take 10 (sqrt 2)))

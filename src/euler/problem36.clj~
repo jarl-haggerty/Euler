@@ -1,0 +1,5 @@
+(let [palindrome? (fn [input]
+		    (let [q (digits input)]
+		      (= q (reverse q))))]
+  (filter #(and (-> % Integer/toString palindrome?)
+		(-> % Integer/toBinaryString palindrome?))) (range 100))

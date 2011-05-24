@@ -1,0 +1,6 @@
+(time (let [gcd (fn [a b] (if (< a b)
+			    (recur b a)
+			    (loop [x (max a b) y (min a b) z (mod x y)]
+					(if (zero? z)
+					  y
+					  (recur y z (mod y z))))))]))

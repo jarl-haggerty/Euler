@@ -1,0 +1,38 @@
+
+(let [log (fn [base input]
+	    (loop [current input result 0]
+	      (if (>= (/ current base) 1)
+		(recur (/ current base) (inc result))
+		result)))
+      digits 1000]  
+  (loop [accum [0 1] counter 1 direction 1 step 100]
+    (if (zero? (mod counter step))
+      (let [current-log (log 10 (last accum))]
+	(cond
+	 (and (> current-log (dec digits))
+	      (> 0 step))
+	 (recur [(last accum) (apply + accum)]
+		(+ counter direction)
+		(- direction)
+		(min -1 (int (/ step -10))))
+	 (and (< current-log (dec digits))
+	      (< 0 step))
+	 (recur [(- (apply + accum) (last accum)) (first accum)]
+		(+ counter direction)
+		(- direction)
+		(max 1 (int (/ step 10))))
+	 (not= current-log (dec digits))
+	 (recur [(last accum) (apply + accum)]
+		(+ counter direction)
+		(- direction)
+		direction)
+	 :else
+	 (loop [accum accum counter counter]
+	   (if (< (log 10 (first accum)) 1000)
+	     counter
+	     (recur [(- (apply + accum) (last accum)) (first accum)] (dec counter))))
+	 counter
+	 ))
+
+      
+      (recur (list (last accum) (apply + accum)) (inc counter) step))))

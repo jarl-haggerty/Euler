@@ -1,0 +1,13 @@
+(ns euler.problem13
+  (:use euler.core
+        clojure.java.io)
+  (:import java.util.Scanner))
+
+(def a
+     (loop [scanner (Scanner. (reader "problem13.txt")) accum []]
+       (if (.hasNext scanner)
+         (recur scanner (conj accum (.nextInt scanner)))
+         accum)))
+
+(def tens (log 10 (reduce + a)))
+(println (bigint (/ (reduce + a) (pow 10 (- tens 9)))))

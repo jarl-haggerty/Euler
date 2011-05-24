@@ -1,0 +1,8 @@
+(ns euler.problem12
+    (:use euler.core))
+
+(defn main []
+  (loop [current 3 index 2]
+    (if (> (reduce * (map inc (vals (prime-factorization current)))) 500)
+      (println current)
+      (recur (+ current (inc index)) (inc index)))))

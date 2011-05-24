@@ -1,0 +1,15 @@
+(time (let [sqrt (fn [n] (if (zero? n)
+			   0
+			   (let [initial (* 2 (Math/sqrt n))]
+			     (loop [guess (- initial (/ (- (* initial initial) initial) (* 2 initial))) last-guess initial]
+			       (if (< (- last-guess guess) 1/10)
+				 (let [dec-guess (bigint guess)
+				       inc-guess (inc dec-guess)]
+				   (condp = n
+				       (* dec-guess dec-guess) dec-guess
+				       (* inc-guess inc-guess) inc-guess
+				       guess))
+				 (recur (- guess (/ (- (* guess guess) n) (* 2 guess)))
+					guess))))))
+	    square? (comp #(if (integer? %) % nil) sqrt)]
+	(first (filter square? (map #(inc (* 2N % %)) (range 1000000000000 Double/POSITIVE_INFINITY))))))

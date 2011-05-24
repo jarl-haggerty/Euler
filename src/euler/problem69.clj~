@@ -1,0 +1,40 @@
+(time (letfn [(gcd [cache a b]
+		   (loop [x a y b z (mod x y) accum []]
+		     (cond
+		      (zero? z) (reduce #(assoc %1 %2 y) cache (conj accum [x y]))
+		      (contains? cache [x y]) (reduce #(assoc %1 %2 (get cache [x y])) cache (conj accum [x y]))
+		      :else (recur y z (mod y z) (conj accum [x y])))))
+	      (iteration [[cache number maximum]]
+			 (let [cache (reduce #(gcd %1 (inc number) %2) cache (range 1 (inc number)))]
+			   [cache
+			    (inc number)
+			    (max maximum (/ (inc number) (count (filter #(= % 1)
+								       (map #(get cache [(inc number) %])
+									    (range 1 (inc number)))))))]))]
+	(rest (last (take-while (comp (partial >= 1000) second) (iterate iteration [{} 2 2]))))))
+
+(time (let [sqrt (fn [n] (if (zero? n)
+			   0
+			   (let [initial (* 2 (Math/sqrt n))]
+			     (loop [guess (- initial (/ (- (* initial initial) initial) (* 2 initial))) last-guess initial]
+			       (if (< (- last-guess guess) 1/10)
+				 (let [dec-guess (long guess)
+				       inc-guess (inc dec-guess)]
+				   (condp = n
+				       (* dec-guess dec-guess) dec-guess
+				       (* inc-guess inc-guess) inc-guess
+				       guess))
+				 (recur (- guess (/ (- (* guess guess) n) (* 2 guess)))
+					guess))))))
+	    square? (comp #(if (integer? %) % nil) sqrt)]
+	(loop [Ds (set (filter (complement square?) (range 1 100)))
+	       stack (map #(dec (* % %)) (range 2 Double/POSITIVE_INFINITY))
+	       accum {}]
+;	  (println Ds (first stack) accum (some #(square? (/ (first stack) %)) Ds))
+	  (if (empty? Ds)
+	    (sort-by first accum)
+	    (if-let [D (first (filter #(square? (/ (first stack) %)) Ds))]
+	      (recur (disj Ds D)
+		     (rest stack)
+		     (assoc accum D (sqrt (inc (first stack)))))
+	      (recur Ds (rest stack) accum))))))

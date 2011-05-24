@@ -1,0 +1,38 @@
+(ns euler.problem14
+  (:use euler.core clojure.set)
+  (:gen-class))
+
+;(defn step [input]
+ ; (if (zero? (mod input 2))
+ ;   (/ input 2)
+ ;   (inc (* 3 input))))
+
+;(loop [numbers (map #(vector (int %1) (int %2)) (range 1 1000000) (range 1 1000000))]
+;  (println (first numbers))
+;  (if (empty? (rest numbers))
+;    (println (first numbers))
+;    (recur 
+;      (for [n numbers :when (not= (second n) 1)]
+;        [(first n) (step (second n))]))))
+
+(def lengths (atom {1 1}))
+
+(defn collatz [input]
+  (loop [current input accum 0]
+    (if (contains? @lengths current)
+      (do
+        (swap! lengths #(assoc % input (+ accum (get % current))))
+        (get @lengths input))
+      (if (zero? (mod current 2))
+        (recur (/ current 2) (inc accum))
+        (recur (inc (* 3 current)) (inc accum))))))
+
+(defn -main [& args]
+  (time 
+    (println
+      (loop [x (range 2 1000000) accum [1 1]]
+        (if (empty? x)
+          (first accum)
+          (let [temp (collatz (first x))]
+            (recur (rest x) (if (> temp (second accum)) [(first x) temp] accum))))))))
+    

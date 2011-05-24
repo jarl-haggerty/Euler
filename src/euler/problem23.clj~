@@ -1,0 +1,10 @@
+(ns euler.problem23
+  (:use euler.core clojure.set)
+  (:gen-class))
+
+(defn -main [& args]
+  (def abundant-numbers (set (for [x (range 1 28123) :when (> (reduce + (divisors x)) x)] x)))
+  (println 'here)
+  (def sums-of-abundants (set (for [x abundant-numbers y (filter #(<= % x) abundant-numbers) :when (< (+ x y) 28123)] (+ x y))))
+  (println 'there)
+  (println (reduce + (difference (set (range 1 28123)) sums-of-abundants))))

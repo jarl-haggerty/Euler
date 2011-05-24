@@ -1,0 +1,13 @@
+(ns euler.problem21
+  (:use euler.core))
+
+(defn amicable-filter [x]
+  (let [divisor-sum (reduce + (divisors x))]
+    (and (not= divisor-sum x) (= (reduce + (divisors divisor-sum)) x))))
+      
+
+(let [amicables (filter amicable-filter (range 1 10000))]
+  (doall
+    (for [x amicables]
+      (println x (divisors x))))
+  (println (reduce + amicables)))

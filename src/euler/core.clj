@@ -23,23 +23,26 @@
                (recur stack (/ current (first stack)) (merge-with + accum {(first stack) 1})))
              (recur (rest stack) current accum)))))
 
+(defn digits [input] (inc (log 10 input)))
+
 (defn log [base input]
   (loop [current input result 0]
-    (if (< (/ current base) 1)
+    (if (>= (/ current base) 1)
       (recur (/ current base) (inc result))
       result)))
 
-(defn digits [input] (inc (log 10 input)))
-
-(defn pow [x y]
-  (cond
-   (= y 0) 1
-   (= y 1) x
-   :else (recur (* x x) (dec y))))
+(defn pow
+  ([x y] (reduce * 1 (repeat y x))))
 
 (defn int-to-list [input]
   (for [x (range (log 10 input) -1 -1)]
     (mod (bigint (/ input (pow 10 x))) 10)))
+
+(defn list-to-int [input]
+  (loop [stack input power (dec (count input)) accum 0]
+    (if (> power -1)
+      (recur (rest stack) (dec power) (+ accum (* (first stack) (pow 10 power))))
+      accum)))
 
 (defn inc-indices [input dimensions]
   (loop [l-input input l-dimensions dimensions result []]
@@ -187,29 +190,11 @@
             (< % (+ bottom (* (inc b) bin-size))))
           args)])))
 
-(def currencies #{1 2 5 10 20 50 100 200})
-(def goal 200)
 
-(defn sol []
-  (loop [open (set (map vector currencies)) solutions #{}]
-    (println (count open) (count solutions))
-    (if (empty? open)
-      solutions
-      (let [new-solutions (filter #(= (reduce + %) goal) open)
-            new-open (set
-                      (filter #(<= (reduce + %) goal)
-                              (apply concat
-                                     (map (fn [x]
-                                            (map (fn [y] (conj x y))
-                                                 (filter #(<= % (last x)) currencies)))
-                                          (difference open new-solutions)))))]
-        (recur new-open (union solutions new-solutions))))))
-
-
-(defn sol2
+(defn sol2 []
   (loop [x (range 1000000000) accum []]
     (if (empty? x)
-      counter
+      (count accum)
       (recur (rest x)
              (loop [y (range (inc x)) inner-accum []]
                (if (empty? y)

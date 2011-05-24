@@ -1,0 +1,30 @@
+(let [prime? (fn [input]
+	       (cond
+		(<= input 1) false
+		(= input 2) true
+		:else (every? not
+			      (for [n (range 2 (inc (Math/sqrt input)))]
+				(zero? (mod input n))))))
+      primes (set (filter prime? (range 1000000)))
+      log (fn [base input]
+	    (loop [current input result 0]
+	      (if (>= (/ current base) 1)
+		(recur (/ current base) (inc result))
+		result)))
+      pow (fn [x y] (reduce * 1 (repeat y x)))
+      digits (fn [input]
+	       (for [x (range (log 10 input) -1 -1)]
+		 (mod (bigint (/ input (pow 10 x))) 10)))
+      permutations (fn [input]
+		     (let [sorted-input (apply sorted-set input)]
+		       (loop [current (map vector input)]
+			 (if (= (count (first current)) (count input))
+			   current
+			   (recur
+			    (for [c current i (reduce disj sorted-input c)]
+			      (conj c i)))))))]
+  (filter
+   (fn [prime]
+     (let [permutations (->> prime digits permutations (map list-to-int))]
+       (every? identity (map #(contains? primes %) permutations))))
+   primes))
