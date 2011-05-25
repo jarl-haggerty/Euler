@@ -1,4 +1,7 @@
-(time (let [continue (fn [[a numerator denominator]]
+(import 'clojure.lang.Ratio)
+(import 'java.math.BigInteger)
+(time (let [squares (set (take-while #(< % 1000) (map #(* % %) (range))))
+	    continue (fn [[a numerator denominator]]
 		       (let [new-numerator (/ (- (first denominator) (* (second denominator) (second denominator)))
 					      numerator)
 			     integral (int (/ (+ (Math/sqrt (first denominator)) (second denominator))
@@ -9,29 +12,18 @@
 	    sqrt (fn [n] (let [coefficients (continued-fraction-coefficients n)]
 			   (map first (reductions (fn [[two one] a]
 						    [one(/ (+ (* a (numerator one)) (numerator two))
-							   (+ (* a (denominator one)) (denominator two)))
-						     ])
+							   (+ (* a (denominator one)) (denominator two)))])
 						  [(Ratio. (BigInteger. (str (first coefficients)))
 							   BigInteger/ONE)
 						   (Ratio. (BigInteger. (str (inc (* (first coefficients) (second coefficients)))))
 							   (BigInteger. (str (second coefficients))))]
-						  (nthnext coefficients 2)))))
-	    int-sqrt (fn [n] (if (zero? n)
-			       0
-			       (let [initial (* 2 (Math/sqrt n))]
-				 (loop [guess (- initial (/ (- (* initial initial) initial) (* 2 initial))) last-guess initial]
-				   (if (< (- last-guess guess) 1/10)
-				     (let [dec-guess (bigint guess)
-					   inc-guess (inc dec-guess)]
-				       (condp = n
-					   (* dec-guess dec-guess) dec-guess
-					   (* inc-guess inc-guess) inc-guess
-					   guess))
-				     (recur (- guess (/ (- (* guess guess) n) (* 2 guess)))
-					    guess))))))
-	    square? (comp #(if (integer? %) % nil) int-sqrt)]
-	(first (apply max-key #(numerator (second %))
-		      (for [D (filter (complement square?) (range 1000000))]
-			[D (first (drop-while #(not= (- (* (numerator %) (numerator %))
-							(* D (denominator %) (denominator %))) 1)
-					      (sqrt D)))])))))
+						  (nthnext coefficients 2)))))]
+	(first (reduce (fn [D1 D2]
+			 (let [new-x (numerator (first (drop-while #(not= (- (* (numerator %) (numerator %))
+									     (* D2 (denominator %) (denominator %)))
+									  1)
+								   (sqrt D2))))]
+			   (if (> (second D1) new-x)
+			     D1 [D2 new-x])))
+		       [-1 -1]
+		       (filter (complement squares) (range 1000))))))
